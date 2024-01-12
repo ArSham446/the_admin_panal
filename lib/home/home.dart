@@ -23,7 +23,7 @@ class MyHomePage extends StatelessWidget {
           token = value.data()!['token'];
         });
       } catch (e) {
-        print(e);
+        print('error getting token');
       }
       final data = {
         'notification': {
@@ -43,6 +43,7 @@ class MyHomePage extends StatelessWidget {
           },
           body: jsonEncode(data),
         );
+        debugPrint('Notification sent');
       } catch (e) {
         print(e);
       }
@@ -133,9 +134,15 @@ class MyHomePage extends StatelessWidget {
                                           MediaQuery.of(context).size.height *
                                               0.8,
                                       child: ListView.builder(
-                                        itemCount: snapshot.data.docs.length,
+                                        itemCount: //first 10
+                                            snapshot.data.docs.length > 10
+                                                ? 10
+                                                : snapshot.data.docs.length,
                                         itemBuilder:
                                             (BuildContext context, int index) {
+                                          debugPrint(snapshot.data.docs[index]
+                                              ['ownerId']);
+
                                           return ListTile(
                                             title: Text(snapshot.data
                                                 .docs[index]['parkingName']),
@@ -155,10 +162,10 @@ class MyHomePage extends StatelessWidget {
                                                   'status': 'approved'
                                                 }).whenComplete(() =>
                                                         sendNotification(
+                                                            'Your parking ${snapshot.data.docs[index]['parkingName']} request has been approved',
                                                             snapshot.data
                                                                     .docs[index]
-                                                                ['ownerId'],
-                                                            'Your parking ${snapshot.data.docs[index]['parkingName']} request has been approved'));
+                                                                ['ownerId']));
                                               },
                                               child: const Text('Approve'),
                                             ),

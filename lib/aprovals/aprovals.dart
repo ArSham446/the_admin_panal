@@ -10,7 +10,7 @@ class PendingApprovalsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String token = '';
-    Future<void> sendNotification(String sid) async {
+    Future<void> sendNotification(String message, String sid) async {
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(sid)
@@ -21,7 +21,7 @@ class PendingApprovalsWidget extends StatelessWidget {
       final data = {
         'notification': {
           'title': 'Approval',
-          'body': 'Your account has been approved',
+          'body': message,
           'click_action': 'FLUTTER_NOTIFICATION_CLICK'
         },
         'to': token
@@ -90,7 +90,9 @@ class PendingApprovalsWidget extends StatelessWidget {
                                         .update({
                                       'status': 'active'
                                     }).whenComplete(() => sendNotification(
-                                            snapshot.data.docs[index].id));
+                                            'Your parking ${snapshot.data.docs[index]['parkingName']} request has been approved',
+                                            snapshot.data.docs[index]
+                                                ['ownerId']));
                                   },
                                   child: const Text('Approve'),
                                 ),
