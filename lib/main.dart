@@ -3,20 +3,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:the_admin_panal/auth/logi.dart';
 
-import 'package:the_admin_panal/home/home.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     try {
       await Firebase.initializeApp(
           options: const FirebaseOptions(
-              apiKey: "AIzaSyDfo9cqhRF8FufZE5jK4QYfvtSbUUJdNSU",
-              authDomain: "thebrandsapp-fc8ae.firebaseapp.com",
-              projectId: "thebrandsapp-fc8ae",
-              storageBucket: "thebrandsapp-fc8ae.appspot.com",
-              messagingSenderId: "375333230289",
-              appId: "1:375333230289:web:1a0f67b686ba404eef97f0"));
+        apiKey: 'AIzaSyA-N4HCPW-QSwTY6gAb-Oa_-VpcJ0fe_zc',
+        appId: '1:985158664091:web:e57c3ee75b900762b42b3e',
+        messagingSenderId: '985158664091',
+        projectId: 'spotfinder-a7e90',
+        authDomain: 'spotfinder-a7e90.firebaseapp.com',
+        storageBucket: 'spotfinder-a7e90.appspot.com',
+      ));
     } catch (e) {
       print(e);
     }

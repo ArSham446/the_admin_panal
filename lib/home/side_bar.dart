@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:the_admin_panal/aprovals/aprovals.dart';
 import 'package:the_admin_panal/auth/logi.dart';
-import 'package:the_admin_panal/reports/reports.dart';
 
 class SideBar extends StatelessWidget {
   const SideBar({super.key});
@@ -61,20 +60,20 @@ class SideBar extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const Reports();
-            }));
-          },
-          child: const Text(
-            'Reports',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+        // GestureDetector(
+        //   onTap: () {
+        //     Navigator.push(context, MaterialPageRoute(builder: (context) {
+        //       return const Reports();
+        //     }));
+        //   },
+        //   child: const Text(
+        //     'Reports',
+        //     style: TextStyle(
+        //       fontSize: 20,
+        //       fontWeight: FontWeight.bold,
+        //     ),
+        //   ),
+        // ),
         const SizedBox(height: 20),
         GestureDetector(
           onTap: () {

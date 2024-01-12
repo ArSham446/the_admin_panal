@@ -2,12 +2,10 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:http/http.dart' as http;
 import 'package:the_admin_panal/aprovals/aprovals.dart';
 import 'package:the_admin_panal/home/box.dart';
 import 'package:the_admin_panal/home/side_bar.dart';
-import 'package:http/http.dart' as http;
-import 'package:the_admin_panal/reports/reports.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -18,7 +16,7 @@ class MyHomePage extends StatelessWidget {
     Future<void> sendNotification(String message, String sid) async {
       try {
         await FirebaseFirestore.instance
-            .collection('suppliers')
+            .collection('Users')
             .doc(sid)
             .get()
             .then((value) {
@@ -41,7 +39,7 @@ class MyHomePage extends StatelessWidget {
           headers: <String, String>{
             'Content-Type': 'application/json',
             'Authorization':
-                'key=AAAAV2OaltE:APA91bFdRb9lHBTieJhv3sKIDbdQCdrrQkarHM9NF0j71EdP7Row40AQ6eOl9v1fqK6QTbCR2hEdkJPL98fNbDTbDX0ps7nSlR8YNXX46v2uRWYyTaQtfdNtA2v68mtabnTBqHMOZcSm'
+                'key=AAAA5WAIP5s:APA91bG2nI1ydw_eqUn5VuCJMEYZDJbIa3GF6o5Z9XlwXku3Vl2E57WupHnOdDiMoM-skrmKyqm1hNWsEa_oNr-veKPTLFPLLZWIpcRUoXDdBIUuDZXiCSCuTgs9VD6OrxqCKHlcXV04'
           },
           body: jsonEncode(data),
         );
@@ -67,19 +65,19 @@ class MyHomePage extends StatelessWidget {
                 padding: const EdgeInsets.all(20.0),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Reports()));
-                      },
-                      child: const Mybox(
-                        text: 'View All Reports',
-                        icon: Icons.report_problem,
-                        color: Colors.pinkAccent,
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) => const Reports()));
+                    //   },
+                    //   child: const Mybox(
+                    //     text: 'View All Reports',
+                    //     icon: Icons.report_problem,
+                    //     color: Colors.pinkAccent,
+                    //   ),
+                    // ),
                     const SizedBox(
                       width: 20,
                     ),
@@ -106,132 +104,70 @@ class MyHomePage extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    const Text('Recent Reports'),
+                    const Text('Recent Aproval requests'),
                     SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        child:
-                            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                          stream: FirebaseFirestore.instance
-                              .collection('reports')
-                              .orderBy('time', descending: true)
-                              .snapshots(), // replace with your stream
-                          builder: (BuildContext context,
-                              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
-                                  snapshot) {
-                            if (snapshot.hasData && snapshot.data != null) {
-                              return ListView.builder(
-                                itemCount: //first 10 items
-                                    snapshot.data!.docs.length > 4
-                                        ? 10
-                                        : snapshot.data!.docs.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  //get user details
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('parkings')
+                            .where('status', isEqualTo: 'pending')
 
-                                  return ListTile(
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        getNames(
-                                            'customers',
-                                            'name',
-                                            snapshot.data!.docs[index]
-                                                ['reportedby'],
-                                            index),
-                                        getNames(
-                                            'suppliers',
-                                            'storename',
-                                            snapshot.data!.docs[index]
-                                                ['reportedto'],
-                                            index),
-                                        Text(
-                                            'Report Message: ${snapshot.data!.docs[index]['report']}')
-                                      ],
-                                    ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            await FirebaseFirestore.instance
-                                                .collection('suppliers')
-                                                .doc(snapshot.data!.docs[index]
-                                                    ['reportedto'])
-                                                .update({
-                                              'status': 'blocked'
-                                            }).whenComplete(() async {
-                                              debugPrint(snapshot.data!
-                                                  .docs[index]['reportedto']
-                                                  .toString());
-                                              sendNotification(
-                                                  'Your account has been blocked for violating our terms and conditions.',
-                                                  snapshot.data!.docs[index]
-                                                      ['reportedto']);
-                                            });
-                                          },
-                                          child: const Text('Block User'),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            int warnings = 0;
-                                            try {
-                                              await FirebaseFirestore.instance
-                                                  .collection('suppliers')
-                                                  .doc(snapshot.data!
-                                                      .docs[index]['reportedto']
-                                                      .toString())
-                                                  .get()
-                                                  .then((value) async {
-                                                debugPrint(snapshot.data!
-                                                    .docs[index]['reportedto']
-                                                    .toString());
-                                                if (value
-                                                        .data()!['warncount'] ==
-                                                    null) {
-                                                  warnings = 1;
-                                                } else {
-                                                  warnings = value.data()![
-                                                          'warncount'] +
-                                                      1;
-                                                }
+                            //or do not have status field
 
-                                                await FirebaseFirestore.instance
-                                                    .collection('suppliers')
+                            .snapshots(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          return snapshot.data == null
+                              ? const Center(
+                                  child: SizedBox(
+                                      height: 50,
+                                      width: 50,
+                                      child: CircularProgressIndicator()),
+                                )
+                              : snapshot.data.docs.length == 0
+                                  ? const Center(
+                                      child: Text('No Pending Approvals'),
+                                    )
+                                  : SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.8,
+                                      child: ListView.builder(
+                                        itemCount: snapshot.data.docs.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return ListTile(
+                                            title: Text(snapshot.data
+                                                .docs[index]['parkingName']),
+                                            subtitle: Text(snapshot.data
+                                                .docs[index]['parkingAddress']),
+                                            trailing: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.green,
+                                                foregroundColor: Colors.white,
+                                              ),
+                                              onPressed: () {
+                                                FirebaseFirestore.instance
+                                                    .collection('parkings')
                                                     .doc(snapshot
-                                                        .data!
-                                                        .docs[index]
-                                                            ['reportedto']
-                                                        .toString())
+                                                        .data.docs[index].id)
                                                     .update({
-                                                  'warncount': warnings,
-                                                  'warnmsg':
-                                                      'You have been warned $warnings times for violating our terms and conditions. If you continue to do so, your account will be blocked. you have only ${2 - warnings} warnings left.'
+                                                  'status': 'approved'
                                                 }).whenComplete(() =>
                                                         sendNotification(
-                                                            'You have been warned $warnings times for violating our terms and conditions.',
-                                                            snapshot.data!
+                                                            snapshot.data
                                                                     .docs[index]
-                                                                [
-                                                                'reportedto']));
-                                              });
-                                            } catch (e) {
-                                              print(e);
-                                            }
-                                          },
-                                          child: const Text('Warn User'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else {
-                              return const CircularProgressIndicator(); // show a loading spinner when data is loading
-                            }
-                          },
-                        )),
+                                                                ['ownerId'],
+                                                            'Your parking ${snapshot.data.docs[index]['parkingName']} request has been approved'));
+                                              },
+                                              child: const Text('Approve'),
+                                            ),
+                                          );
+                                        },
+                                      ));
+                        },
+                      ),
+                    )
                   ],
                 ),
               )

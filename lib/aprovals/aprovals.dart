@@ -12,7 +12,7 @@ class PendingApprovalsWidget extends StatelessWidget {
     String token = '';
     Future<void> sendNotification(String sid) async {
       await FirebaseFirestore.instance
-          .collection('suppliers')
+          .collection('Users')
           .doc(sid)
           .get()
           .then((value) {
@@ -32,7 +32,7 @@ class PendingApprovalsWidget extends StatelessWidget {
           headers: <String, String>{
             'Content-Type': 'application/json',
             'Authorization':
-                'key=AAAAV2OaltE:APA91bFdRb9lHBTieJhv3sKIDbdQCdrrQkarHM9NF0j71EdP7Row40AQ6eOl9v1fqK6QTbCR2hEdkJPL98fNbDTbDX0ps7nSlR8YNXX46v2uRWYyTaQtfdNtA2v68mtabnTBqHMOZcSm'
+                'key=AAAA5WAIP5s:APA91bG2nI1ydw_eqUn5VuCJMEYZDJbIa3GF6o5Z9XlwXku3Vl2E57WupHnOdDiMoM-skrmKyqm1hNWsEa_oNr-veKPTLFPLLZWIpcRUoXDdBIUuDZXiCSCuTgs9VD6OrxqCKHlcXV04'
           },
           body: jsonEncode(data),
         );
@@ -53,7 +53,7 @@ class PendingApprovalsWidget extends StatelessWidget {
           ),
           StreamBuilder(
             stream: FirebaseFirestore.instance
-                .collection('suppliers')
+                .collection('parkings')
                 .where('status', isEqualTo: 'pending')
 
                 //or do not have status field
@@ -75,9 +75,9 @@ class PendingApprovalsWidget extends StatelessWidget {
                             itemBuilder: (BuildContext context, int index) {
                               return ListTile(
                                 title: Text(
-                                    snapshot.data.docs[index]['storename']),
-                                subtitle:
-                                    Text(snapshot.data.docs[index]['email']),
+                                    snapshot.data.docs[index]['parkingName']),
+                                subtitle: Text(snapshot.data.docs[index]
+                                    ['parkingAddress']),
                                 trailing: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.green,
