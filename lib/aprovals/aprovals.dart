@@ -78,23 +78,52 @@ class PendingApprovalsWidget extends StatelessWidget {
                                     snapshot.data.docs[index]['parkingName']),
                                 subtitle: Text(snapshot.data.docs[index]
                                     ['parkingAddress']),
-                                trailing: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                    foregroundColor: Colors.white,
+                                trailing: SizedBox(
+                                  width: 200,
+                                  child: Row(
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.green,
+                                          foregroundColor: Colors.white,
+                                        ),
+                                        onPressed: () {
+                                          FirebaseFirestore.instance
+                                              .collection('suppliers')
+                                              .doc(snapshot.data.docs[index].id)
+                                              .update({
+                                            'status': 'active'
+                                          }).whenComplete(() => sendNotification(
+                                                  'Your parking ${snapshot.data.docs[index]['parkingName']} request has been approved',
+                                                  snapshot.data.docs[index]
+                                                      ['ownerId']));
+                                        },
+                                        child: const Text('Approve'),
+                                      ),
+                                      ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all<
+                                                    Color>(Colors.red),
+                                            foregroundColor:
+                                                MaterialStateProperty.all<
+                                                    Color>(Colors.white),
+                                          ),
+                                          onPressed: () {
+                                            FirebaseFirestore.instance
+                                                .collection('parkings')
+                                                .doc(snapshot
+                                                    .data.docs[index].id)
+                                                .update({
+                                              'status': 'declined'
+                                            }).whenComplete(() => sendNotification(
+                                                    'Your parking ${snapshot.data.docs[index]['parkingName']} request has been declined',
+                                                    snapshot.data.docs[index]
+                                                        ['ownerId']));
+                                          },
+                                          child: const Text('Decline'))
+                                    ],
                                   ),
-                                  onPressed: () {
-                                    FirebaseFirestore.instance
-                                        .collection('suppliers')
-                                        .doc(snapshot.data.docs[index].id)
-                                        .update({
-                                      'status': 'active'
-                                    }).whenComplete(() => sendNotification(
-                                            'Your parking ${snapshot.data.docs[index]['parkingName']} request has been approved',
-                                            snapshot.data.docs[index]
-                                                ['ownerId']));
-                                  },
-                                  child: const Text('Approve'),
                                 ),
                               );
                             },
