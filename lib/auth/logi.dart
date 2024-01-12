@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:the_admin_panal/auth/auth_controller.dart';
 import 'package:the_admin_panal/home/home.dart';
@@ -47,20 +45,39 @@ class LoginPage extends StatelessWidget {
                   ),
                   onPressed: () {
                     AuthController authController = AuthController();
-                    authController
-                        .signInWithEmailAndPassword(
-                            emailController.text, passwordController.text)
-                        .whenComplete(() {
-                      debugPrint(authController.user.toString());
-                      if (authController.user != null) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MyHomePage(),
-                          ),
-                        );
-                      }
-                    });
+                    if (emailController.text != 'admin@admin.admin') {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                                title: const Text('Error'),
+                                content:
+                                    const Text('Invalid Email or Password'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Ok'))
+                                ],
+                              ));
+                      return;
+                    } else {
+                      debugPrint('Email is correct');
+                      authController
+                          .signInWithEmailAndPassword(
+                              emailController.text, passwordController.text)
+                          .whenComplete(() {
+                        debugPrint(authController.user.toString());
+                        if (authController.user != null) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MyHomePage(),
+                            ),
+                          );
+                        }
+                      });
+                    }
                   },
                   child: const Text('Login'),
                 ),
